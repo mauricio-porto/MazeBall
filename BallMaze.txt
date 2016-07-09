@@ -1,0 +1,6 @@
+Descrição funcional
+
+    - O tabuleiro deve acompanhar os movimentos do celular nos dois eixos até o limite de inclinação
+    - Se o celular estiver parado no plano horizontal, o tabuleiro deve acompanhá-lo, ou seja, é um gesto de estabilização do tabuleiro
+    - Em suma, a inclinação do tabuleiro deve tentar seguir a inclinação do celular até o limite de inclinação
+
