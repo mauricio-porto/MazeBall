@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#673AB7</color>
+    <color name="colorPrimaryDark">#512DA8</color>
+    <color name="accentColor">#A57982</color>
+
+    <color name="colorUnpressed">#84693ab9</color>
+    <color name="colorPressed">#673AB7</color>
+    <color name="colorGraph">#673AB7</color>
+    <color name="colorTextView">#ff606060</color>
+    <color name="colorTextViewDark">#ff020202</color>
+
+
+</resources>
