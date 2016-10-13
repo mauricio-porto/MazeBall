@@ -483,7 +483,7 @@ public class BluetoothChatFragment extends Fragment {
 		private float lasty;
 		private float lastz;
 		
-		private float threshold = 0.05f;
+		private float threshold = 1.0f;
 
 		public MySensor() {
 			super();
@@ -518,16 +518,16 @@ public class BluetoothChatFragment extends Fragment {
 					significant = true;
 					lasty = y;
 				}
-				if (Math.abs(z - lastz) > threshold) {
+/*				if (Math.abs(z - lastz) > threshold) {
 					significant = true;
 					lastz = z;
 				}
-				if (significant) {
+*/				if (significant) {
 					setDegrees();
-					mConversationArrayAdapter.add("X: " + lastx);
+/*					mConversationArrayAdapter.add("X: " + lastx);
 					mConversationArrayAdapter.add("Y: " + lasty);
 					mConversationArrayAdapter.add("Z: " + lastz);
-					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
+*/					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
 					mConversationArrayAdapter.add("Y degrees: " + y_degrees + " " + '\u00b0');
 					significant = false;
 				}
