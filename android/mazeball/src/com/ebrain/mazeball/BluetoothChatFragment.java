@@ -434,56 +434,14 @@ public class BluetoothChatFragment extends Fragment {
 		private float y;	// Eixo vertical, apontando para cima
 		private float z;	// Eixo ortogonal, apontando para o rosto do usuário
 
-		/**
-		 * Quando o celular está na horizontal, os valores "estáveis" são:
-		 * 
-		 * X: -0.0036621094
-		 * Y: 0.021728516
-		 * Z: -0.40441895  // Está "deitado"
-		 * 
-		 * Se inclinado para a direita, os valores "estáveis" são:
-		 * 
-		 * X: -0.1219000
-		 * Y: 0.24145508
-		 * Z: 0.40979004
-		 * 
-		 * Se inclinado para a esquerda, os valores "estáveis" são:
-		 * 
-		 * X: 0.1400000
-		 * Y: -0.215866
-		 * Z: 0.5267800
-		 * 
-		 * Se inclinado com o topo do celular para cima:
-		 * 
-		 * X: 0.00861864
-		 * Y: -0.0435791
-		 * Z: -0.44836426
-		 * 
-		 * Se inclinado com o topo do celular para baixo:
-		 * 
-		 * X: -0.028320313
-		 * Y: 0.088867766
-		 * Z: -0.94262484
-		 * 
-		 * CONCLUSÕES:
-		 * 
-		 * Na posição "deitado", o valor de Y representa sozinho a inclicação.
-		 * Se inclinado para direita são valores positivos.
-		 * 
-		 * As inclinações para "frente" e para "trás" são determinadas pelo produto X*Z
-		 * Se o valor de Z é positivo, está inclinado para cima/frente.
-		 * 
-		 */
-
-
 		private float x_degrees;
 		private float y_degrees;
 
 		private float lastx;
 		private float lasty;
-		private float lastz;
+		private boolean first = true;
 		
-		private float threshold = 1.0f;
+		private float threshold = 3.0f;	// Em graus
 
 		public MySensor() {
 			super();
@@ -510,24 +468,31 @@ public class BluetoothChatFragment extends Fragment {
 				x = event.values[0];
 				y = event.values[1];
 				z = event.values[2];
-				if (Math.abs(x - lastx) > threshold) {
-					significant = true;
-					lastx = x;
+				double norm_of_degrees = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+				
+				// Normalize the accelerometer vector
+				float valuesAccel_X = (float) (x / norm_of_degrees);
+				float valuesAccel_Y = (float) (y / norm_of_degrees);
+				
+				x_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_X)));
+				y_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_Y)));
+				if (first) {
+					first = false;
+					lastx = x_degrees;
+					lasty = y_degrees;					
+				} else {
+					if (Math.abs(x_degrees - lastx) > threshold) {
+						significant = true;
+						lastx = x_degrees;
+					}
+					if (Math.abs(y_degrees - lasty) > threshold) {
+						significant = true;
+						lasty = y_degrees;
+					}
 				}
-				if (Math.abs(y - lasty) > threshold) {
-					significant = true;
-					lasty = y;
-				}
-/*				if (Math.abs(z - lastz) > threshold) {
-					significant = true;
-					lastz = z;
-				}
-*/				if (significant) {
-					setDegrees();
-/*					mConversationArrayAdapter.add("X: " + lastx);
-					mConversationArrayAdapter.add("Y: " + lasty);
-					mConversationArrayAdapter.add("Z: " + lastz);
-*/					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
+
+				if (significant) {
+					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
 					mConversationArrayAdapter.add("Y degrees: " + y_degrees + " " + '\u00b0');
 					significant = false;
 				}
@@ -539,18 +504,5 @@ public class BluetoothChatFragment extends Fragment {
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
 			// Nothing to do
 		}
-
-		private void setDegrees() {
-	        double norm_of_degrees = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-
-	        // Normalize the accelerometer vector
-	        float valuesAccel_X = (float) (x / norm_of_degrees);
-	        float valuesAccel_Y = (float) (y / norm_of_degrees);
-
-	        x_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_X)));
-	        y_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_Y)));
-	    };
-
-
 	}
 }
