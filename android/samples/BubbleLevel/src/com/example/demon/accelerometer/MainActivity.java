@@ -71,6 +71,7 @@ public class MainActivity extends Activity {
         text_Horizontal.setTextSize(textSize);
         button_Start.setTextSize(textSize);
         button_Pause.setTextSize(textSize);
+        tvText.setTextSize(textSize);
     }
 
     private int getTextSize() {
@@ -79,7 +80,7 @@ public class MainActivity extends Activity {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        return height/30;
+        return height/90;
     }
 
     private void setFonts() {

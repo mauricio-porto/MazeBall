@@ -475,7 +475,10 @@ public class BluetoothChatFragment extends Fragment {
 		 * 
 		 */
 
-		
+
+		private float x_degrees;
+		private float y_degrees;
+
 		private float lastx;
 		private float lasty;
 		private float lastz;
@@ -485,7 +488,7 @@ public class BluetoothChatFragment extends Fragment {
 		public MySensor() {
 			super();
 			// find the rotation-vector sensor
-            mRotationVectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);			
+            mRotationVectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);			
 		}
 
 		public void start() {
@@ -503,7 +506,7 @@ public class BluetoothChatFragment extends Fragment {
 			boolean significant = false;
 			// we received a sensor event. it is a good practice to check
 			// that we received the proper event
-			if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 				x = event.values[0];
 				y = event.values[1];
 				z = event.values[2];
@@ -520,9 +523,12 @@ public class BluetoothChatFragment extends Fragment {
 					lastz = z;
 				}
 				if (significant) {
+					setDegrees();
 					mConversationArrayAdapter.add("X: " + lastx);
-					mConversationArrayAdapter.add("Y: " + lasty);					
-					mConversationArrayAdapter.add("Z: " + lastz);					
+					mConversationArrayAdapter.add("Y: " + lasty);
+					mConversationArrayAdapter.add("Z: " + lastz);
+					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
+					mConversationArrayAdapter.add("Y degrees: " + y_degrees + " " + '\u00b0');
 					significant = false;
 				}
 			}
@@ -533,6 +539,18 @@ public class BluetoothChatFragment extends Fragment {
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
 			// Nothing to do
 		}
+
+		private void setDegrees() {
+	        double norm_of_degrees = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+
+	        // Normalize the accelerometer vector
+	        float valuesAccel_X = (float) (x / norm_of_degrees);
+	        float valuesAccel_Y = (float) (y / norm_of_degrees);
+
+	        x_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_X)));
+	        y_degrees = (float)(90 - Math.toDegrees(Math.acos(valuesAccel_Y)));
+	    };
+
 
 	}
 }
