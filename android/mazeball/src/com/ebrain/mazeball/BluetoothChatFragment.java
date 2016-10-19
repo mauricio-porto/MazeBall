@@ -441,7 +441,7 @@ public class BluetoothChatFragment extends Fragment {
 		private float lasty;
 		private boolean first = true;
 		
-		private float threshold = 3.0f;	// Em graus
+		private float threshold = 5.0f;	// Em graus
 
 		public MySensor() {
 			super();
@@ -461,7 +461,9 @@ public class BluetoothChatFragment extends Fragment {
 
 		@Override
 		public void onSensorChanged(SensorEvent event) {
-			boolean significant = false;
+			boolean significantX = false;
+			boolean significantY = false;
+
 			// we received a sensor event. it is a good practice to check
 			// that we received the proper event
 			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -482,19 +484,32 @@ public class BluetoothChatFragment extends Fragment {
 					lasty = y_degrees;					
 				} else {
 					if (Math.abs(x_degrees - lastx) > threshold) {
-						significant = true;
+						significantX = true;
 						lastx = x_degrees;
 					}
 					if (Math.abs(y_degrees - lasty) > threshold) {
-						significant = true;
+						significantY = true;
 						lasty = y_degrees;
 					}
 				}
 
-				if (significant) {
+				if (significantX) {
 					mConversationArrayAdapter.add("X degrees: " + x_degrees + " " + '\u00b0');
+					if (x_degrees > 0) {
+						sendMessage("r");
+					} else if (x_degrees < 0) {
+						sendMessage("l");						
+					}
+					significantX = false;
+				}
+				if (significantY) {
 					mConversationArrayAdapter.add("Y degrees: " + y_degrees + " " + '\u00b0');
-					significant = false;
+					if (y_degrees > 0) {
+						sendMessage("t");
+					} else if (y_degrees < 0) {
+						sendMessage("b");
+					}
+					significantY = false;
 				}
 			}
 
