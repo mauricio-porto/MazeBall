@@ -484,11 +484,15 @@ public class BluetoothChatFragment extends Fragment {
 					lasty = y_degrees;					
 				} else {
 					if (Math.abs(x_degrees - lastx) > threshold) {
-						significantX = true;
+						if (Math.abs(x_degrees) > Math.abs(lastx)) {
+							significantX = true;
+						}
 						lastx = x_degrees;
 					}
 					if (Math.abs(y_degrees - lasty) > threshold) {
-						significantY = true;
+						if (Math.abs(y_degrees) > Math.abs(lasty)) {
+							significantY = true;
+						}
 						lasty = y_degrees;
 					}
 				}
