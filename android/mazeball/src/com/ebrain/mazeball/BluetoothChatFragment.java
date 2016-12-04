@@ -39,6 +39,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -112,6 +113,8 @@ public class BluetoothChatFragment extends Fragment {
 		// Get an instance of the SensorManager
 		mSensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
 		mSensor = new MySensor();
+		
+		activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 
 	@Override
@@ -232,7 +235,7 @@ public class BluetoothChatFragment extends Fragment {
 	private void sendMessage(String message) {
 		// Check that we're actually connected before trying anything
 		if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-			Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -441,7 +444,9 @@ public class BluetoothChatFragment extends Fragment {
 		private float lasty;
 		private boolean first = true;
 		
-		private float threshold = 5.0f;	// Em graus
+		private float threshold = 3.0f;	// Em graus
+		
+		private long lastEvent;
 
 		public MySensor() {
 			super();
@@ -451,7 +456,7 @@ public class BluetoothChatFragment extends Fragment {
 
 		public void start() {
 			// enable our sensor when the activity is resumed, ask for 10 ms updates.
-			mSensorManager.registerListener(this, mRotationVectorSensor, SensorManager.SENSOR_DELAY_GAME);
+			mSensorManager.registerListener(this, mRotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		}
 
 		public void stop() {
@@ -464,9 +469,11 @@ public class BluetoothChatFragment extends Fragment {
 			boolean significantX = false;
 			boolean significantY = false;
 
+			long now = System.currentTimeMillis();
 			// we received a sensor event. it is a good practice to check
 			// that we received the proper event
-			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+			if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && lastEvent + 500 < now) {
+				lastEvent = now;
 				x = event.values[0];
 				y = event.values[1];
 				z = event.values[2];
